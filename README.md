@@ -1,0 +1,29 @@
+# Unidad 9 — Recordatorios de citas
+
+Servicio Spring Boot 3 y Java 21 que consulta citas dentro de las próximas 24 horas y envía el recordatorio por el canal elegido. Una Factory selecciona las estrategias de correo y SMS; `Clock` permite fijar el tiempo en pruebas.
+
+## Ejecutar
+
+```bash
+mvn clean verify
+mvn spring-boot:run
+```
+
+H2 se crea en memoria. Los gateways de esta práctica registran mensajes en consola; no contactan proveedores ni envían comunicaciones reales.
+
+## Pruebas
+
+- `CitaReminderServiceImplTest`: ventana temporal, canal seleccionado, lista vacía y fallo de envío sin persistencia.
+- `NotificadorUrgenteTest`: envío correcto, fallo del gateway y cita inexistente.
+- `CitaRepositoryTest` (`@DataJpaTest`): consulta JPA/H2 por rango y estado.
+- `RecordatorioIntegrationTest` (`@SpringBootTest`): Spring, JPA, Factory y estrategia SMS reales; solo el gateway externo se sustituye.
+- JaCoCo genera HTML y XML en `target/site/jacoco/` durante `verify`.
+
+## Decisiones
+
+1. Un `Clock` fijo controla tiempo; mocks aíslan la orquestación; H2 verifica consultas; gateway sustituido en integración evita red.
+2. El caso de uso recibe repositorio, Factory y reloj. Cada canal depende de un gateway intercambiable.
+3. La configuración publica `UrgentGateway` con qualifier. La cita se marca solo después de un envío correcto.
+4. En producción, una falla entre el envío y el commit puede duplicar un mensaje al reintentar. Se mitigaría con idempotencia y outbox.
+
+El workflow `.github/workflows/ci.yml` ejecuta `mvn -B verify` con Temurin 21 en cada push y pull request.

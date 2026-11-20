@@ -1,3 +1,5 @@
+Repositorio GitHub: https://github.com/JuanPCT/correa-post1-u9
+
 # Unidad 9 — Recordatorios de citas
 
 Servicio Spring Boot 3 y Java 21 que consulta citas dentro de las próximas 24 horas y envía el recordatorio por el canal elegido. Una Factory selecciona las estrategias de correo y SMS; `Clock` permite fijar el tiempo en pruebas.
